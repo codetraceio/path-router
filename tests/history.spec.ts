@@ -15,7 +15,8 @@ import {
   setDefaultCallback,
   startHistory,
   isHistoryStarted,
-  stopHistory
+  stopHistory,
+  isLocationExternal
 } from "../src/history";
 
 describe("history", () => {
@@ -152,6 +153,21 @@ describe("history", () => {
       startHistory();
       expect(isHistoryStarted()).toBe(true);
       stopHistory();
+    });
+  });
+
+  describe('isLocationExternal', () => {
+    it('should return true when location external', () => {
+      setHistoryOptions({
+        basePath: "admin",
+      });
+      expect(isLocationExternal("profile")).toBe(true);
+    });
+    it('should return false when location external', () => {
+      setHistoryOptions({
+        basePath: "admin",
+      });
+      expect(isLocationExternal("admin/something")).toBe(false);
     });
   });
 });

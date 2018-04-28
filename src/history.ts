@@ -85,8 +85,13 @@ export function stopHistory(): void {
   started = false;
 }
 
-export function isExernalUrl(path: string): boolean {
-  return currentOptions.basePath && path.indexOf(currentOptions.basePath) !== 0;
+/**
+ * Check is path extenal
+ * @param {string} path
+ * @return {boolean}
+ */
+export function isLocationExternal(location: string): boolean {
+  return currentOptions.basePath && location.indexOf(currentOptions.basePath) !== 0;
 }
 
 /**
@@ -94,12 +99,12 @@ export function isExernalUrl(path: string): boolean {
  * @param path
  */
 export function navigate(path: string): void {
-  if (isExernalUrl(path)) {
+  if (isLocationExternal(path)) {
     window.location.assign(currentOptions.baseUrl + path);
     return;
   }
   window.history.pushState(null, null, currentOptions.baseUrl + path);
-  open(path);
+  openCurrentLocation();
 }
 
 /**
@@ -107,12 +112,12 @@ export function navigate(path: string): void {
  * @param {string} path
  */
 export function replace(path: string): void {
-  if (isExernalUrl(path)) {
+  if (isLocationExternal(path)) {
     window.location.replace(currentOptions.baseUrl + path);
     return;
   }
   window.history.replaceState(null, null, currentOptions.baseUrl + path);
-  this.open(path);
+  openCurrentLocation();
 }
 
 /**
