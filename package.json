@@ -1,9 +1,9 @@
 {
   "name": "path-router-web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple light-weight router",
   "main": "index.js",
-  "typings": "typescript/index.d.ts",
+  "typings": "typescript/history.d.ts",
   "scripts": {
     "test": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test-dev": "jest --coverage",
