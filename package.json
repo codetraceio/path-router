@@ -1,0 +1,50 @@
+{
+  "name": "path-router-web",
+  "version": "0.0.1",
+  "description": "A simple light-weight router",
+  "main": "index.js",
+  "typings": "typescript/index.d.ts",
+  "scripts": {
+    "test": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test-dev": "jest --coverage",
+    "lint": "./node_modules/tslint/bin/tslint -c tslint.json -t stylish src/**/*.ts",
+    "build": "./run/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codetraceio/path-router.git"
+  },
+  "author": "omegascorp <omegascorp@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/codetraceio/path-router/issues"
+  },
+  "homepage": "https://github.com/codetraceio/path-router#readme",
+  "devDependencies": {
+    "@types/jest": "^22.2.3",
+    "jest": "^22.4.3",
+    "jest-environment-jsdom": "^22.4.3",
+    "jest-environment-jsdom-global": "^1.0.3",
+    "ts-jest": "^22.4.4",
+    "ts-loader": "^4.2.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.8.3",
+    "webpack": "^4.6.0"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-jsdom-global",
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx|js)$": "./preprocessor.js"
+    },
+    "testMatch": [
+      "**/tests/**/*.(ts|tsx|js)"
+    ]
+  }
+}
