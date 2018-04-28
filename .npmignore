@@ -5,9 +5,7 @@
 /src
 /tests
 
-/LICENSE
 /preprocessor.js
-/README.md
 /tsconfig.js
 /tslint.json
 /yarn-error.log
