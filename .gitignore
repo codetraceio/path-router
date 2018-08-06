@@ -3,6 +3,7 @@
 /coverage
 /typescript
 /yarn-error.log
+/.idea
 
 # Editors
 /.vscode
