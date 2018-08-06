@@ -14,6 +14,12 @@ describe('PathTree', () => {
     expect(tree.get("/something/1/2/3")).toBe("value1");
   });
 
+  it('should find the path when constant used after var', () => {
+    const tree = new PathTree<string>();
+    tree.add("/something/:key1/edit", "value1");
+    expect(tree.get("/something/anything/edit")).toBe("value1");
+  });
+
   it('should find a universal path', () => {
     const tree = new PathTree<string>();
     tree.add("/something/:else/:or/:other", "value1");
@@ -21,30 +27,13 @@ describe('PathTree', () => {
     expect(tree.get("/something/1/2")).toBe("value2");
   });
 
-  it('should get tree', () => {
-    const tree = new PathTree<string>();
-    tree.add("/something/1", "value1");
-    tree.add("/something/2", "value2");
-    expect(tree.getTree()).toEqual({
-      "something/1": "value1",
-      "something/2": "value2",
-    });
-  });
-
-  it('should add tree', () => {
-    const tree = new PathTree<string>();
-    tree.addTree({
-      "something/1": "value1",
-      "something/2": "value2",
-    });
-    expect(tree.get("/something/2")).toBe("value2");
-  });
-
   it('should warn when overwriting a tree key', () => {
     const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
     const tree = new PathTree<string>();
     tree.add("something/1", "value1");
     tree.add("something/1", "value2");
+    tree.add("something/:id", "value1");
+    tree.add("something/:id", "value2");
     expect(spy).toHaveBeenCalled();
     spy.mockClear();
   });

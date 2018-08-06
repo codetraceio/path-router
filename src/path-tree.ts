@@ -1,68 +1,93 @@
 export interface IPathTree<T> {
-  [key: string]: T;
+  [key: string]: IPathNode<T>;
+}
+
+export interface IPathNode<T> {
+  key?: string;
+  value?: T;
+  children?: IPathTree<T>;
+  leaf?: boolean;
+  parent?: IPathTree<T>;
 }
 
 export class PathTree<T> {
   private tree: IPathTree<T> = {};
+  private nodeParent: IPathTree<T> = null;
 
   add(path: string, value: T) {
-    const unifiedPath = this.removeExtraSlashes(this.unifyPath(path));
-    if (this.tree[unifiedPath]) {
-      console.warn(`path-router: Warning overwriting key ${unifiedPath} in the path tree`);
+    const noSlashPath = this.removeExtraSlashes(path);
+    const pathArray = noSlashPath.split("/");
+    let currentTree: IPathTree<T> = this.tree;
+
+    for (let i = 0; i < pathArray.length; i++) {
+      // checking params
+      const key = pathArray[i][0] === ":" ? ":" : pathArray[i];
+
+      if (key in currentTree) {
+        if (i === pathArray.length - 1) {
+          console.warn(`path-router: Warning duplicate key ${noSlashPath} in the path tree`);
+        }
+      } else {
+        currentTree[key] = this.createNode(pathArray[i], pathArray.length - 1, i, value);
+        this.nodeParent = currentTree;
+
+        // last item of adding path must be a leaf
+        if (i === pathArray.length - 1) {
+          currentTree[key].leaf = true;
+        }
+      }
+      currentTree = currentTree[key].children;
     }
-    this.tree[unifiedPath] = value;
   }
 
-  get(path: string): T | undefined {
+  get(path: string): T {
     const normalizedPath = this.removeExtraSlashes(path);
+    const pathArray = normalizedPath.split("/");
     let value: T;
-    // find a simple value
-    value = this.tree[normalizedPath];
-    if (typeof value !== "undefined") {
-      return value;
-    }
-    let pathArray = normalizedPath.split("/");
-    // find a path value
-    for (let i = pathArray.length - 1; i >= 0; i--) {
-      pathArray[i] = ":";
-      value = this.tree[pathArray.join("/")];
-      if (typeof value !== "undefined") {
-        return value;
+    let currentTree = this.tree;
+
+    for (let i = 0; i < pathArray.length; i++) {
+      if (pathArray[i] in currentTree) {
+        if ((i === pathArray.length - 1) && currentTree[pathArray[i]].leaf) {
+          value = currentTree[pathArray[i]].value;
+          return value;
+        }
+        currentTree = currentTree[pathArray[i]].children;
+      } else if (":" in currentTree) {
+        if ((i === pathArray.length - 1) && currentTree[":"].leaf) {
+          value = currentTree[":"].value;
+          return value;
+        }
+        currentTree = currentTree[":"].children;
       }
     }
 
-    pathArray = normalizedPath.split("/");
-    // find a universal value
     for (let i = pathArray.length - 1; i >= 0; i--) {
-      pathArray[i] = "*";
-      pathArray.splice(i + 1, 1);
-      value = this.tree[pathArray.join("/")];
-      if (typeof value !== "undefined") {
-        return value;
+      if ("*" in currentTree) {
+        return currentTree["*"].value;
+      } else if (currentTree[pathArray[i]]) {
+        currentTree = currentTree[pathArray[i]].parent;
+      } else if (currentTree[":"]) {
+        currentTree = currentTree[":"].parent;
       }
     }
-  }
-
-  /**
-   * Get path tree
-   * @return {object}
-   */
-  getTree(): IPathTree<T> {
-    return this.tree;
-  }
-
-  addTree(pathTree: IPathTree<T>) {
-    Object.keys(pathTree).forEach((key: string) => {
-      this.add(key, pathTree[key]);
-    });
   }
 
   clear() {
     this.tree = {};
+    this.nodeParent = null;
   }
 
-  private unifyPath(path: string) {
-    return path.replace(/:[a-zA-Z0-9]+/g, ":");
+  private createNode(val, lastIndex, index, value): IPathNode<T> {
+    const keyCheck = val.substring(0, 1);
+
+    return {
+      key: keyCheck === ":" ? val.substring(1, val.length) : val,
+      value: index === lastIndex ? value : null,
+      children: {},
+      leaf: index === lastIndex,
+      parent: this.nodeParent,
+    };
   }
 
   private removeExtraSlashes(path: string) {
