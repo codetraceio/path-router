@@ -4,6 +4,7 @@
 /typescript
 /yarn-error.log
 /.idea
+/npm-debug.log
 
 # Editors
 /.vscode
