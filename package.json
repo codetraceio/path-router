@@ -32,6 +32,8 @@
     "webpack": "^4.6.0"
   },
   "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/",
     "testEnvironment": "jest-environment-jsdom-global",
     "collectCoverageFrom": [
       "src/**/*.ts"

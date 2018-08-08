@@ -16,7 +16,7 @@ import {
   startHistory,
   isHistoryStarted,
   stopHistory,
-  isLocationExternal
+  isLocationExternal,
 } from "../src/history";
 
 describe("history", () => {
@@ -35,7 +35,7 @@ describe("history", () => {
         baseUrl: "https://test.com/",
       });
       jsdom.reconfigure({
-        url: "https://test.com/something"
+        url: "https://test.com/something",
       });
       expect(getLocation()).toBe("/something");
     });
@@ -44,7 +44,7 @@ describe("history", () => {
   describe("getHash", () => {
     it("should return hash", () => {
       jsdom.reconfigure({
-        url: "https://test.com/#something"
+        url: "https://test.com/#something",
       });
       setHash("#something");
       expect(getHash()).toBe("something");
@@ -54,7 +54,7 @@ describe("history", () => {
   describe("getQuery", () => {
     it("should return query", () => {
       jsdom.reconfigure({
-        url: "https://test.com/?key1=value1&key2=value2"
+        url: "https://test.com/?key1=value1&key2=value2",
       });
       expect(getQuery()).toEqual({
         key1: "value1",
@@ -127,12 +127,14 @@ describe("history", () => {
         url: "https://test.com/something/val1/val2",
       });
       const spy = jest.fn();
-      const spyError = jest.spyOn(console, "error").mockImplementation(() => {});
+      const spyError = jest.spyOn(console, "error").mockImplementation(() => {
+      });
       setDefaultCallback(spy);
       addRouter([{
         path: "something/:key1/:key2",
         resolves: [() => true, () => Promise.reject(new Error())],
-        callback: () => {}
+        callback: () => {
+        },
       }]);
       await openCurrentLocation();
       expect(spy).toHaveBeenCalled();
