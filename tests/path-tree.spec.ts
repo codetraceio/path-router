@@ -30,8 +30,6 @@ describe('PathTree', () => {
   it('should warn when overwriting a tree key', () => {
     const spy = jest.spyOn(console, "warn").mockImplementation(() => {});
     const tree = new PathTree<string>();
-    tree.add("something/1", "value1");
-    tree.add("something/1", "value2");
     tree.add("something/:id", "value1");
     tree.add("something/:id", "value2");
     expect(spy).toHaveBeenCalled();

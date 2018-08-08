@@ -1,52 +1,61 @@
-export interface IPathTree<T> {
-  [key: string]: IPathNode<T>;
-}
-
 export interface IPathNode<T> {
   key?: string;
   value?: T;
-  children?: IPathTree<T>;
+  children?: {[key: string]: IPathNode<T>};
   leaf?: boolean;
-  parent?: IPathTree<T>;
+  parentNode?: IPathNode<T>;
 }
 
+/**
+ * PathTree - represents a path as a tree structure
+ */
 export class PathTree<T> {
-  private tree: IPathTree<T> = {};
-  private nodeParent: IPathTree<T> = null;
+  private rootNode: IPathNode<T> = {
+    children: {},
+  };
 
+  /**
+   * Adds a path
+   * @param {string} path
+   * @param {object} value 
+   */
   add(path: string, value: T) {
     const noSlashPath = this.removeExtraSlashes(path);
     const pathArray = noSlashPath.split("/");
     const pathArrLength = pathArray.length;
-    let currentTree: IPathTree<T> = this.tree;
+    let currentNode: IPathNode<T> = this.rootNode;
+    let parentNode: IPathNode<T> = null;
+    
 
     for (let i = 0; i < pathArrLength; i++) {
-      // checking params
+      // check params
       const key = pathArray[i][0] === ":" ? ":" : pathArray[i];
 
-      if (key in currentTree) {
-        if (i === pathArrLength - 1) {
+      if (key in currentNode.children) {
+        if (i === pathArrLength - 1 && currentNode.children[key].leaf) {
           console.warn(`path-router: Warning duplicate key ${noSlashPath} in the path tree`);
         }
       } else {
-        currentTree[key] = this.createNode(pathArray[i], pathArrLength - 1, i, value);
-        this.nodeParent = currentTree;
-
-        // last item of adding path must be a leaf
-        if (i === pathArrLength - 1) {
-          currentTree[key].leaf = true;
-        }
+        const newNode = this.createNode(pathArray[i], pathArrLength - 1, i, value, parentNode);
+        currentNode.children[key] = newNode;
       }
-      currentTree = currentTree[key].children;
+      parentNode = currentNode;
+      currentNode = currentNode.children[key];
     }
   }
 
+  /**
+   * Gets a value by path
+   * @param {string} path
+   * @return {object} 
+   */
   get(path: string): T {
     const normalizedPath = this.removeExtraSlashes(path);
     const pathArray = normalizedPath.split("/");
     const pathArrLength = pathArray.length;
     let value: T;
-    let currentTree = this.tree;
+    let currentNode = this.rootNode;
+    let currentTree = currentNode.children;
 
     for (let i = 0; i < pathArrLength; i++) {
       if (pathArray[i] in currentTree) {
@@ -60,35 +69,43 @@ export class PathTree<T> {
           value = currentTree[":"].value;
           return value;
         }
-        currentTree = currentTree[":"].children;
+        currentNode = currentTree[":"];
+        if (!currentNode) {
+          break;
+        }
+        currentTree = currentNode.children;
       }
     }
 
     for (let i = pathArrLength - 1; i >= 0; i--) {
       if ("*" in currentTree) {
         return currentTree["*"].value;
-      } else if (currentTree[pathArray[i]]) {
-        currentTree = currentTree[pathArray[i]].parent;
-      } else if (currentTree[":"]) {
-        currentTree = currentTree[":"].parent;
+      } else {
+        currentNode = currentNode.parentNode;
+        if (!currentNode) {
+          break;
+        }
+        currentTree = currentNode && currentNode.children;
       }
     }
   }
 
+  /**
+   * Clears all existings pathes
+   */
   clear() {
-    this.tree = {};
-    this.nodeParent = null;
+    this.rootNode = {
+      children:{},
+    };
   }
 
-  private createNode(val, lastIndex, index, value): IPathNode<T> {
-    const keyCheck = val.substring(0, 1);
-
+  private createNode(key: string, lastIndex: number, index: number, value: T, parentNode: IPathNode<T>): IPathNode<T> {
     return {
-      key: keyCheck === ":" ? val.substring(1, val.length) : val,
+      key: key[0] === ":" ? key.substring(1, key.length) : key,
       value: index === lastIndex ? value : null,
       children: {},
       leaf: index === lastIndex,
-      parent: this.nodeParent,
+      parentNode: parentNode,
     };
   }
 

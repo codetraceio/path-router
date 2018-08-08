@@ -1,4 +1,4 @@
-import { IPathTree, PathTree } from "./path-tree";
+import { PathTree } from "./path-tree";
 
 export interface IHitoryOptions {
   baseUrl?: string;
@@ -34,7 +34,6 @@ const defaultOptions: IHitoryOptions = {
   basePath: "",
 };
 const pathTree: PathTree<IRoute> = new PathTree<IRoute>();
-const events = {};
 
 let currentOptions: IHitoryOptions = {};
 let started: boolean = false;
