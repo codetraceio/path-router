@@ -48,8 +48,5 @@
     "testMatch": [
       "**/tests/**/*.(ts|tsx|js)"
     ]
-  },
-  "dependencies": {
-    "path-router-web": "^0.0.5"
   }
 }

@@ -17,22 +17,23 @@ export class PathTree<T> {
   add(path: string, value: T) {
     const noSlashPath = this.removeExtraSlashes(path);
     const pathArray = noSlashPath.split("/");
+    const pathArrLength = pathArray.length;
     let currentTree: IPathTree<T> = this.tree;
 
-    for (let i = 0; i < pathArray.length; i++) {
+    for (let i = 0; i < pathArrLength; i++) {
       // checking params
       const key = pathArray[i][0] === ":" ? ":" : pathArray[i];
 
       if (key in currentTree) {
-        if (i === pathArray.length - 1) {
+        if (i === pathArrLength - 1) {
           console.warn(`path-router: Warning duplicate key ${noSlashPath} in the path tree`);
         }
       } else {
-        currentTree[key] = this.createNode(pathArray[i], pathArray.length - 1, i, value);
+        currentTree[key] = this.createNode(pathArray[i], pathArrLength - 1, i, value);
         this.nodeParent = currentTree;
 
         // last item of adding path must be a leaf
-        if (i === pathArray.length - 1) {
+        if (i === pathArrLength - 1) {
           currentTree[key].leaf = true;
         }
       }
@@ -43,18 +44,19 @@ export class PathTree<T> {
   get(path: string): T {
     const normalizedPath = this.removeExtraSlashes(path);
     const pathArray = normalizedPath.split("/");
+    const pathArrLength = pathArray.length;
     let value: T;
     let currentTree = this.tree;
 
-    for (let i = 0; i < pathArray.length; i++) {
+    for (let i = 0; i < pathArrLength; i++) {
       if (pathArray[i] in currentTree) {
-        if ((i === pathArray.length - 1) && currentTree[pathArray[i]].leaf) {
+        if ((i === pathArrLength - 1) && currentTree[pathArray[i]].leaf) {
           value = currentTree[pathArray[i]].value;
           return value;
         }
         currentTree = currentTree[pathArray[i]].children;
       } else if (":" in currentTree) {
-        if ((i === pathArray.length - 1) && currentTree[":"].leaf) {
+        if ((i === pathArrLength - 1) && currentTree[":"].leaf) {
           value = currentTree[":"].value;
           return value;
         }
@@ -62,7 +64,7 @@ export class PathTree<T> {
       }
     }
 
-    for (let i = pathArray.length - 1; i >= 0; i--) {
+    for (let i = pathArrLength - 1; i >= 0; i--) {
       if ("*" in currentTree) {
         return currentTree["*"].value;
       } else if (currentTree[pathArray[i]]) {
