@@ -18,7 +18,8 @@ export type TResolve = (request: IRequest) => Promise<any> | any;
 export interface IRoute {
   path: string;
   resolves?: TResolve[];
-  callback: (...params: any[]) => any;
+  loadingCallback?: () => void;
+  callback?: (...params: any[]) => any;
 }
 
 export interface IParams {
@@ -228,6 +229,9 @@ export function openCurrentLocation(): Promise<any> {
     route.resolves.forEach((resolve: TResolve) => {
       promises.push(resolve(request));
     });
+    if (typeof route.loadingCallback === "function") {
+      route.loadingCallback();
+    }
     return Promise.all(promises).then((results: any[]) => {
       return route.callback(...results);
     }).catch((e) => {

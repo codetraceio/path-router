@@ -17,7 +17,7 @@ export class PathTree<T> {
   /**
    * Adds a path
    * @param {string} path
-   * @param {object} value 
+   * @param {object} value
    */
   add(path: string, value: T) {
     const noSlashPath = this.removeExtraSlashes(path);
@@ -25,7 +25,6 @@ export class PathTree<T> {
     const pathArrLength = pathArray.length;
     let currentNode: IPathNode<T> = this.rootNode;
     let parentNode: IPathNode<T> = null;
-    
 
     for (let i = 0; i < pathArrLength; i++) {
       // check params
@@ -47,7 +46,7 @@ export class PathTree<T> {
   /**
    * Gets a value by path
    * @param {string} path
-   * @return {object} 
+   * @return {object}
    */
   get(path: string): T {
     const normalizedPath = this.removeExtraSlashes(path);
@@ -95,7 +94,7 @@ export class PathTree<T> {
    */
   clear() {
     this.rootNode = {
-      children:{},
+      children: {},
     };
   }
 

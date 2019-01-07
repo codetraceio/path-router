@@ -107,6 +107,22 @@ describe("history", () => {
       clearRoutes();
     });
 
+    it("should call current location loading callback when loading callback and resolves are provided", () => {
+      jsdom.reconfigure({
+        url: "https://test.com/something/val1/val2",
+      });
+      const spy = jest.fn();
+      addRouter([{
+        path: "something/:key1/:key2",
+        resolves: [() => 123],
+        loadingCallback: spy,
+        callback: () => {},
+      }]);
+      openCurrentLocation();
+      expect(spy).toHaveBeenCalled();
+      clearRoutes();
+    });
+
     it("should call current location callback when resolves are resolved", async () => {
       jsdom.reconfigure({
         url: "https://test.com/something/val1/val2",
