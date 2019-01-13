@@ -1,6 +1,6 @@
 # Path Router
 
-![Path Router](assets/path-router.svg?raw=true "Path Router")
+![Path Router](assets/path-router.svg "Path Router")
 
 ## Install
 
