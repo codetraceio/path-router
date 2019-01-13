@@ -5,6 +5,7 @@
 /yarn-error.log
 /.idea
 /npm-debug.log
+/doc
 
 # Editors
 /.vscode

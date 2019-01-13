@@ -1,6 +1,6 @@
 # Path Router
 
-![Path Router](assets/path-router.svg "Path Router")
+![Path Router](https://raw.github.com/codetraceio/path-router/master/assets/path-router.svg?sanitize=true "Path Router")
 
 ## Install
 
@@ -21,9 +21,12 @@ setHistoryOptions({
 
 addRouter([{
     path: "something/:key1/:key2",
-    resolves: [() => true],
-    callback: () => {
-        console.log(true);
+    resolves: [() => "resolve value"],
+    loadingCallback: () => {
+        console.log("Loading started");
+    },
+    callback: (firstResolve: string) => {
+        console.log("Page loaded", firstResolve);
     },
 }]);
 ```

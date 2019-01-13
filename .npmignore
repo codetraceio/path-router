@@ -4,6 +4,8 @@
 /run
 /src
 /tests
+/doc
+/assets
 
 /preprocessor.js
 /tsconfig.js

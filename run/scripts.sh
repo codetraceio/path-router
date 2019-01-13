@@ -8,3 +8,5 @@
 ./node_modules/typescript/bin/tsc --outFile "./dist/amd/index.min.js" --target ES5 --lib DOM,ES6,ScriptHost --noImplicitAny \
 --module amd --moduleResolution classic --jsx react --allowSyntheticDefaultImports \
 ./src/history.ts
+
+./node_modules/typedoc/bin/typedoc --out ../doc/ --target=es2015 ./src/history.ts
