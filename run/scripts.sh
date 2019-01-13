@@ -9,4 +9,4 @@
 --module amd --moduleResolution classic --jsx react --allowSyntheticDefaultImports \
 ./src/history.ts
 
-./node_modules/typedoc/bin/typedoc --out ../doc/ --target=es2015 ./src/history.ts
+./node_modules/typedoc/bin/typedoc --out ./doc/ --target es2015 ./src/history.ts

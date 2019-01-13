@@ -31,6 +31,10 @@ addRouter([{
 }]);
 ```
 
+## Docs
+
+https://codetraceio.github.io/path-router/
+
 ## Contribute
 
 **Install dependencies**
