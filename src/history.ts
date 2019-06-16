@@ -271,9 +271,9 @@ export function setDefaultCallback(callback: () => void) {
 }
 
 /**
- * Is navigation called
- * @return {boolean} returns true if navigation is called at least once
+ * Is navigate called
+ * @return {boolean} returns true if navigate is called at least once
  */
-export function isNavigationCalled(): boolean {
+export function isNavigateCalled(): boolean {
   return navigationCalled;
 }

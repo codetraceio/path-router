@@ -17,19 +17,19 @@ import {
   isHistoryStarted,
   stopHistory,
   isLocationExternal,
-  isNavigationCalled,
+  isNavigateCalled,
   navigate,
 } from "../src/history";
 
 describe("history", () => {
-  describe('isNavigationCalled', () => {
+  describe('isNavigateCalled', () => {
     it('should return false when navigation is not called', () => {
-      expect(isNavigationCalled()).toBe(false);
+      expect(isNavigateCalled()).toBe(false);
     });
 
     it('should return true when navigation is called', () => {
       navigate("");
-      expect(isNavigationCalled()).toBe(true);
+      expect(isNavigateCalled()).toBe(true);
     });
   });
 
