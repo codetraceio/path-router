@@ -1,6 +1,6 @@
 {
   "name": "path-router-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple light-weight router",
   "main": "index.js",
   "typings": "typescript/history.d.ts",

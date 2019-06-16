@@ -17,9 +17,22 @@ import {
   isHistoryStarted,
   stopHistory,
   isLocationExternal,
+  isNavigationCalled,
+  navigate,
 } from "../src/history";
 
 describe("history", () => {
+  describe('isNavigationCalled', () => {
+    it('should return false when navigation is not called', () => {
+      expect(isNavigationCalled()).toBe(false);
+    });
+
+    it('should return true when navigation is called', () => {
+      navigate("");
+      expect(isNavigationCalled()).toBe(true);
+    });
+  });
+
   describe("init", () => {
     it("should set options", () => {
       setHistoryOptions({

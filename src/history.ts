@@ -39,6 +39,7 @@ const pathTree: PathTree<IRoute> = new PathTree<IRoute>();
 let currentOptions: IHitoryOptions = {};
 let started: boolean = false;
 let listener: any = null;
+let navigationCalled: boolean = false;
 let defaultCallback: () => void = () => {};
 
 /**
@@ -103,6 +104,7 @@ export function navigate(path: string): void {
     window.location.assign(currentOptions.baseUrl + path);
     return;
   }
+  navigationCalled = true;
   window.history.pushState(null, null, currentOptions.baseUrl + path);
   openCurrentLocation();
 }
@@ -266,4 +268,12 @@ export function clearRoutes() {
  */
 export function setDefaultCallback(callback: () => void) {
   defaultCallback = callback;
+}
+
+/**
+ * Is navigation called
+ * @return {boolean} returns true if navigation is called at least once
+ */
+export function isNavigationCalled(): boolean {
+  return navigationCalled;
 }
