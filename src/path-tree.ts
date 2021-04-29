@@ -24,7 +24,6 @@ export class PathTree<T> {
     const pathArray = noSlashPath.split("/");
     const pathArrLength = pathArray.length;
     let currentNode: IPathNode<T> = this.rootNode;
-    //let parentNode: IPathNode<T> = null;
 
     for (let i = 0; i < pathArrLength; i++) {
       // check params
@@ -38,7 +37,6 @@ export class PathTree<T> {
         const newNode = this.createNode(pathArray[i], pathArrLength - 1, i, value, currentNode);
         currentNode.children[key] = newNode;
       }
-      //parentNode = currentNode;
       currentNode = currentNode.children[key];
     }
   }
