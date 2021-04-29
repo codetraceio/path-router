@@ -42,4 +42,12 @@ describe('PathTree', () => {
     tree.clear();
     expect(tree.get("/something/1")).toBe(undefined);
   });
+
+  it('should find a path', () => {
+    const tree = new PathTree<string>();
+    tree.add("/something", "value");
+    tree.add("/something/else", "value");
+    tree.add("*", "default");
+    expect(tree.get("/something/other")).toBe("default");
+  });
 });

@@ -24,7 +24,7 @@ export class PathTree<T> {
     const pathArray = noSlashPath.split("/");
     const pathArrLength = pathArray.length;
     let currentNode: IPathNode<T> = this.rootNode;
-    let parentNode: IPathNode<T> = null;
+    //let parentNode: IPathNode<T> = null;
 
     for (let i = 0; i < pathArrLength; i++) {
       // check params
@@ -35,10 +35,10 @@ export class PathTree<T> {
           console.warn(`path-router: Warning duplicate key ${noSlashPath} in the path tree`);
         }
       } else {
-        const newNode = this.createNode(pathArray[i], pathArrLength - 1, i, value, parentNode);
+        const newNode = this.createNode(pathArray[i], pathArrLength - 1, i, value, currentNode);
         currentNode.children[key] = newNode;
       }
-      parentNode = currentNode;
+      //parentNode = currentNode;
       currentNode = currentNode.children[key];
     }
   }
@@ -62,6 +62,7 @@ export class PathTree<T> {
           value = currentTree[pathArray[i]].value;
           return value;
         }
+        currentNode = currentTree[pathArray[i]];
         currentTree = currentTree[pathArray[i]].children;
       } else if (":" in currentTree) {
         if ((i === pathArrLength - 1) && currentTree[":"].leaf) {
@@ -96,6 +97,20 @@ export class PathTree<T> {
     this.rootNode = {
       children: {},
     };
+  }
+
+  /**
+   * Print tree
+   */
+  print() {
+    this.printInternal(this.rootNode, "");
+  }
+
+  private printInternal(node: IPathNode<T>, prefix: string) {
+    Object.values(node.children).forEach((child) => {
+      console.log(prefix, child.key, child.leaf ? "leaf" : "", child.parentNode ? "has parent" : "");
+      this.printInternal(child, `  ${prefix}`);
+    });
   }
 
   private createNode(key: string, lastIndex: number, index: number, value: T, parentNode: IPathNode<T>): IPathNode<T> {
