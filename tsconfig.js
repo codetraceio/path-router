@@ -1,4 +1,4 @@
-{
+module.exports = {
   "target": "ES5",
   "lib": ["es2017", "dom"],
   "noImplicitAny": true,

@@ -147,7 +147,7 @@ describe("history", () => {
         callback: spy
       }]);
       await openCurrentLocation();
-      expect(spy).toHaveBeenCalledWith(true, 123);
+      expect(spy).toHaveBeenCalledWith(expect.any(Object), true, 123);
       clearRoutes();
     });
 

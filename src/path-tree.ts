@@ -1,16 +1,16 @@
-export interface IPathNode<T> {
+export interface PathNode<T> {
   key?: string;
   value?: T;
-  children?: {[key: string]: IPathNode<T>};
+  children?: {[key: string]: PathNode<T>};
   leaf?: boolean;
-  parentNode?: IPathNode<T>;
+  parentNode?: PathNode<T>;
 }
 
 /**
  * PathTree - represents a path as a tree structure
  */
 export class PathTree<T> {
-  private rootNode: IPathNode<T> = {
+  private rootNode: PathNode<T> = {
     children: {},
   };
 
@@ -23,7 +23,7 @@ export class PathTree<T> {
     const noSlashPath = this.removeExtraSlashes(path);
     const pathArray = noSlashPath.split("/");
     const pathArrLength = pathArray.length;
-    let currentNode: IPathNode<T> = this.rootNode;
+    let currentNode: PathNode<T> = this.rootNode;
 
     for (let i = 0; i < pathArrLength; i++) {
       // check params
@@ -104,14 +104,14 @@ export class PathTree<T> {
     this.printInternal(this.rootNode, "");
   }
 
-  private printInternal(node: IPathNode<T>, prefix: string) {
+  private printInternal(node: PathNode<T>, prefix: string) {
     Object.values(node.children).forEach((child) => {
       console.log(prefix, child.key, child.leaf ? "leaf" : "", child.parentNode ? "has parent" : "");
       this.printInternal(child, `  ${prefix}`);
     });
   }
 
-  private createNode(key: string, lastIndex: number, index: number, value: T, parentNode: IPathNode<T>): IPathNode<T> {
+  private createNode(key: string, lastIndex: number, index: number, value: T, parentNode: PathNode<T>): PathNode<T> {
     return {
       key: key[0] === ":" ? key.substring(1, key.length) : key,
       value: index === lastIndex ? value : null,

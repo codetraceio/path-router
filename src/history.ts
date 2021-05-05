@@ -1,42 +1,42 @@
 import { PathTree } from "./path-tree";
 
-export interface IHitoryOptions {
+export interface HitoryOptions {
   baseUrl?: string;
   basePath?: string;
   [key: string]: string;
 }
 
-export interface IRequest {
+export interface Request {
   location: string;
-  params: IParams;
-  query: IQuery;
+  params: Params;
+  query: Query;
   hash: string;
 }
 
-export type TResolve = (request: IRequest) => Promise<any> | any;
+export type Resolve = (request: Request) => Promise<any> | any;
 
-export interface IRoute {
+export interface Route {
   path: string;
-  resolves?: TResolve[];
+  resolves?: Resolve[];
   loadingCallback?: () => void;
-  callback?: (...params: any[]) => any;
+  callback?: (request: Request, ...params: any[]) => any;
 }
 
-export interface IParams {
+export interface Params {
   [key: string]: string;
 }
 
-export interface IQuery {
+export interface Query {
   [key: string]: string;
 }
 
-const defaultOptions: IHitoryOptions = {
+const defaultOptions: HitoryOptions = {
   baseUrl: "/",
   basePath: "",
 };
-const pathTree: PathTree<IRoute> = new PathTree<IRoute>();
+const pathTree: PathTree<Route> = new PathTree<Route>();
 
-let currentOptions: IHitoryOptions = {};
+let currentOptions: HitoryOptions = {};
 let started: boolean = false;
 let listener: any = null;
 let navigationCalled: boolean = false;
@@ -46,7 +46,7 @@ let defaultCallback: () => void = () => {};
  * Set history options
  * @param options
  */
-export function setHistoryOptions(options: IHitoryOptions): void {
+export function setHistoryOptions(options: HitoryOptions): void {
   currentOptions = {...defaultOptions, ...options};
 }
 
@@ -147,7 +147,7 @@ export function getLocation(): string {
  * Gets current query
  * @return {object}
  */
-export function getQuery(): IQuery {
+export function getQuery(): Query {
   const query = window.location.search.substr(1);
   if (!query) {
     return {};
@@ -156,7 +156,7 @@ export function getQuery(): IQuery {
   return (
     query
     .split("&")
-    .reduce((params: IQuery, param: string) => {
+    .reduce((params: Query, param: string) => {
       const [ key, value ] = param.split("=");
       params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : "";
       return params;
@@ -177,9 +177,9 @@ export function getHash(): string {
  * @param {string} path
  * @return {string}
  */
-export function getParams(path: string, location: string): IParams {
+export function getParams(path: string, location: string): Params {
   const locationArray: string[] = location.split("/");
-  const params: IParams = {};
+  const params: Params = {};
   path.split("/").forEach((value: string, index: number) => {
     if (value[0] === ":") {
       params[value.substr(1)] = locationArray[index];
@@ -201,7 +201,7 @@ export function setHash(hash: string): void {
  * @param {string} path
  * @return {object}
  */
-export function getRequest(path: string): IRequest {
+export function getRequest(path: string): Request {
   const location = getLocation();
   return {
     location: location,
@@ -219,29 +219,29 @@ export function getRequest(path: string): IRequest {
 export function openCurrentLocation(): Promise<any> {
   const locaton = getLocation();
 
-  const route: IRoute = pathTree.get(locaton);
+  const route: Route = pathTree.get(locaton);
   if (!route) {
     return Promise.resolve(defaultCallback());
   }
 
-  const request: IRequest = getRequest(route.path);
+  const request: Request = getRequest(route.path);
 
   const promises: Array<Promise<any>> = [];
   if (route.resolves) {
-    route.resolves.forEach((resolve: TResolve) => {
+    route.resolves.forEach((resolve: Resolve) => {
       promises.push(resolve(request));
     });
     if (typeof route.loadingCallback === "function") {
       route.loadingCallback();
     }
     return Promise.all(promises).then((results: any[]) => {
-      return route.callback(...results);
+      return route.callback(request, ...results);
     }).catch((e) => {
       console.error("Can't open a route", e.message, e.stack);
       return defaultCallback();
     });
   } else {
-    return Promise.resolve(route.callback());
+    return Promise.resolve(route.callback(request));
   }
 }
 
@@ -249,8 +249,8 @@ export function openCurrentLocation(): Promise<any> {
  * Add router
  * @param {object[]} router
  */
-export function addRouter(router: IRoute[]) {
-  router.forEach((route: IRoute) => {
+export function addRouter(router: Route[]) {
+  router.forEach((route: Route) => {
     pathTree.add(route.path, route);
   });
 }
