@@ -50,4 +50,12 @@ describe('PathTree', () => {
     tree.add("*", "default");
     expect(tree.get("/something/other")).toBe("default");
   });
+
+  it('should not find a path', () => {
+    const tree = new PathTree<string>();
+    tree.add("/a/:long/:something", "value1");
+    tree.add("/something", "value2");
+    tree.add("*", "default");
+    expect(tree.get("/not/long/something")).toBe("default");
+  });
 });

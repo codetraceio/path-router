@@ -1,8 +1,8 @@
 export interface PathNode<T> {
-  key?: string;
+  key: string;
   value?: T;
-  children?: {[key: string]: PathNode<T>};
-  leaf?: boolean;
+  children: {[key: string]: PathNode<T>};
+  leaf: boolean;
   parentNode?: PathNode<T>;
 }
 
@@ -11,7 +11,9 @@ export interface PathNode<T> {
  */
 export class PathTree<T> {
   private rootNode: PathNode<T> = {
+    key: "",
     children: {},
+    leaf: false,
   };
 
   /**
@@ -46,12 +48,12 @@ export class PathTree<T> {
    * @param {string} path
    * @return {object}
    */
-  get(path: string): T {
+  get(path: string): T | undefined {
     const normalizedPath = this.removeExtraSlashes(path);
     const pathArray = normalizedPath.split("/");
     const pathArrLength = pathArray.length;
-    let value: T;
-    let currentNode = this.rootNode;
+    let value: T | undefined;
+    let currentNode: PathNode<T> | undefined = this.rootNode;
     let currentTree = currentNode.children;
 
     for (let i = 0; i < pathArrLength; i++) {
@@ -72,6 +74,8 @@ export class PathTree<T> {
           break;
         }
         currentTree = currentNode.children;
+      } else {
+        break;
       }
     }
 
@@ -93,7 +97,9 @@ export class PathTree<T> {
    */
   clear() {
     this.rootNode = {
+      key: "",
       children: {},
+      leaf: false,
     };
   }
 
@@ -114,7 +120,7 @@ export class PathTree<T> {
   private createNode(key: string, lastIndex: number, index: number, value: T, parentNode: PathNode<T>): PathNode<T> {
     return {
       key: key[0] === ":" ? key.substring(1, key.length) : key,
-      value: index === lastIndex ? value : null,
+      value: index === lastIndex ? value : undefined,
       children: {},
       leaf: index === lastIndex,
       parentNode: parentNode,

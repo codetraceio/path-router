@@ -1,8 +1,8 @@
 import { PathTree } from "./path-tree";
 
 export interface HitoryOptions {
-  baseUrl?: string;
-  basePath?: string;
+  baseUrl: string;
+  basePath: string;
   [key: string]: string;
 }
 
@@ -19,7 +19,7 @@ export interface Route {
   path: string;
   resolves?: Resolve[];
   loadingCallback?: () => void;
-  callback?: (request: Request, ...params: any[]) => any;
+  callback: (request: Request, ...params: any[]) => any;
 }
 
 export interface Params {
@@ -36,7 +36,9 @@ const defaultOptions: HitoryOptions = {
 };
 const pathTree: PathTree<Route> = new PathTree<Route>();
 
-let currentOptions: HitoryOptions = {};
+let currentOptions: HitoryOptions = {
+  ...defaultOptions,
+};
 let started: boolean = false;
 let listener: any = null;
 let navigationCalled: boolean = false;
@@ -46,8 +48,8 @@ let defaultCallback: () => void = () => {};
  * Set history options
  * @param options
  */
-export function setHistoryOptions(options: HitoryOptions): void {
-  currentOptions = {...defaultOptions, ...options};
+export function setHistoryOptions(options: Partial<HitoryOptions>): void {
+  currentOptions = {...defaultOptions, ...options} as HitoryOptions;
 }
 
 /**
@@ -92,7 +94,7 @@ export function stopHistory(): void {
  * @return {boolean}
  */
 export function isLocationExternal(location: string): boolean {
-  return currentOptions.basePath && location.indexOf(currentOptions.basePath) !== 0;
+  return !!currentOptions.basePath && location.indexOf(currentOptions.basePath) !== 0;
 }
 
 /**
@@ -105,7 +107,7 @@ export function navigate(path: string): void {
     return;
   }
   navigationCalled = true;
-  window.history.pushState(null, null, currentOptions.baseUrl + path);
+  window.history.pushState(null, "", currentOptions.baseUrl + path);
   openCurrentLocation();
 }
 
@@ -118,7 +120,7 @@ export function replace(path: string): void {
     window.location.replace(currentOptions.baseUrl + path);
     return;
   }
-  window.history.replaceState(null, null, currentOptions.baseUrl + path);
+  window.history.replaceState(null, "", currentOptions.baseUrl + path);
   openCurrentLocation();
 }
 
@@ -219,8 +221,8 @@ export function getRequest(path: string): Request {
 export function openCurrentLocation(): Promise<any> {
   const locaton = getLocation();
 
-  const route: Route = pathTree.get(locaton);
-  if (!route) {
+  const route: Route | undefined = pathTree.get(locaton);
+  if (typeof route !== "object") {
     return Promise.resolve(defaultCallback());
   }
 
@@ -241,7 +243,7 @@ export function openCurrentLocation(): Promise<any> {
       return defaultCallback();
     });
   } else {
-    return Promise.resolve(route.callback(request));
+    return Promise.resolve(route && route.callback(request));
   }
 }
 
